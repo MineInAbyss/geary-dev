@@ -1,0 +1,6 @@
+name: Geary
+version: @version@
+main: com.mineinabyss.geary.Geary
+api-version: 1.15
+authors: [Paul1365972]
+description: ECS
