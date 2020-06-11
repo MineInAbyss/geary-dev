@@ -1,40 +1,34 @@
 package com.mineinabyss.geary
 
-import com.mineinabyss.geary.ecs.engines.SimpleEngine
-import com.mineinabyss.geary.ecs.system.GearySystem
-import org.bukkit.plugin.Plugin
-import org.bukkit.plugin.ServicePriority
+import com.mineinabyss.geary.base.events.EntityTickEvent
+import com.mineinabyss.geary.base.events.ItemTickEvent
+import com.mineinabyss.geary.event.PluginDisableListener
 import org.bukkit.plugin.java.JavaPlugin
 
 internal lateinit var PLUGIN: Geary
 
-class Geary : JavaPlugin(), GearyService {
-    private val engine = SimpleEngine()
-    private val pluginSystemsMap = mutableMapOf<Plugin, MutableSet<GearySystem>>()
-
+class Geary : JavaPlugin() {
     override fun onLoad() {
         PLUGIN = this
     }
 
     override fun onEnable() {
-        server.scheduler.scheduleSyncRepeatingTask(this, { engine.update() }, 1, 1)
-        server.pluginManager.registerEvents(PluginDisableListener(this), this)
-        server.servicesManager.register(GearyService::class.java, this, this, ServicePriority.Normal)
+        server.pluginManager.registerEvents(PluginDisableListener(), this)
+        server.scheduler.scheduleSyncRepeatingTask(this, {
+            server.onlinePlayers.forEach { player ->
+                player.inventory.let { inventory ->
+                    inventory.forEach { item ->
+                        ItemTickEvent(item, inventory, player).call()
+                    }
+                }
+            }
+            server.worlds.forEach { world ->
+                world.entities.forEach { entity ->
+                    EntityTickEvent(entity).call()
+                }
+            }
+        }, 1, 1)
     }
 
     override fun onDisable() {}
-
-    override fun addSystems(plugin: Plugin, vararg systems: GearySystem) {
-        pluginSystemsMap.computeIfAbsent(plugin) { mutableSetOf() }.addAll(systems)
-        systems.forEach { engine.addSystem(it) }
-    }
-
-    override fun removeSystem(plugin: Plugin, vararg systems: GearySystem) {
-        pluginSystemsMap[plugin]?.removeAll(systems)
-        systems.forEach { engine.removeSystem(it) }
-    }
-
-    override fun removeSystems(plugin: Plugin) {
-        pluginSystemsMap.remove(plugin)?.forEach { engine.removeSystem(it) }
-    }
 }

@@ -10,7 +10,10 @@ object GearyEventManager {
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Event> call(event: T): Boolean {
-        classListenerMap[event.javaClass]?.forEach { (it as EventListener<T>).handler(event) }
+        classListenerMap[event.javaClass]?.forEach {
+            if (!(it.ignoreCancelled && event.cancelled))
+                (it as EventListener<T>).handler(event)
+        }
         return !event.cancelled
     }
 
@@ -21,12 +24,12 @@ object GearyEventManager {
     }
 
     @JvmOverloads
-    fun <T : Event> register(plugin: Plugin, clazz: Class<T>, listener: (T) -> Unit, priority: EventPriority = EventPriority.NORMAL) {
-        register(clazz, EventListener(plugin, listener, priority))
+    fun <T : Event> register(plugin: Plugin, clazz: Class<T>, listener: (T) -> Unit, ignoreCancelled: Boolean = true, priority: EventPriority = EventPriority.NORMAL) {
+        register(clazz, EventListener(plugin, listener, ignoreCancelled, priority))
     }
 
-    inline fun <reified T : Event> register(plugin: Plugin, noinline listener: (T) -> Unit, priority: EventPriority = EventPriority.NORMAL) {
-        register(T::class.java, EventListener(plugin, listener, priority))
+    inline fun <reified T : Event> register(plugin: Plugin, noinline listener: (T) -> Unit, ignoreCancelled: Boolean = true, priority: EventPriority = EventPriority.NORMAL) {
+        register(T::class.java, EventListener(plugin, listener, ignoreCancelled, priority))
     }
 
     fun unregister(plugin: Plugin) {
