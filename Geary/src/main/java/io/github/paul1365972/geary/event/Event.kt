@@ -1,4 +1,4 @@
-package com.mineinabyss.geary.event
+package io.github.paul1365972.geary.event
 
 open class Event {
     var cancelled = false

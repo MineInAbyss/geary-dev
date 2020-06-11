@@ -1,0 +1,6 @@
+name: Geary-Core
+version: @version@
+main: io.github.paul1365972.gearycore.GearyCore
+api-version: 1.15
+authors: [Paul1365972]
+description: ECS Base

@@ -1,4 +1,4 @@
-package com.mineinabyss.geary.ecs
+package io.github.paul1365972.geary.ecs
 
 import io.github.paul1365972.story.key.DataKey
 

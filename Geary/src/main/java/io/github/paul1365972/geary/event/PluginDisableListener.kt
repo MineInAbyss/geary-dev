@@ -1,4 +1,4 @@
-package com.mineinabyss.geary.event
+package io.github.paul1365972.geary.event
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

@@ -1,17 +1,18 @@
-package com.mineinabyss.geary
+package io.github.paul1365972.geary
 
-import com.mineinabyss.geary.base.events.EntityTickEvent
-import com.mineinabyss.geary.base.events.ItemTickEvent
-import com.mineinabyss.geary.event.PluginDisableListener
+import io.github.paul1365972.geary.base.events.EntityTickEvent
+import io.github.paul1365972.geary.base.events.ItemTickEvent
+import io.github.paul1365972.geary.event.PluginDisableListener
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 
+private lateinit var INSTANCE: Geary
+
 class Geary : JavaPlugin() {
-    internal companion object {
-        lateinit var PLUGIN: Geary
-    }
+    internal companion object : Plugin by INSTANCE
 
     override fun onLoad() {
-        PLUGIN = this
+        INSTANCE = this
     }
 
     override fun onEnable() {

@@ -1,6 +1,5 @@
-package com.mineinabyss.geary.event
+package io.github.paul1365972.geary.event
 
-import org.bukkit.event.EventPriority
 import org.bukkit.plugin.Plugin
 import java.util.*
 import java.util.stream.Stream
@@ -12,7 +11,7 @@ object GearyEventManager {
     fun <T : Event> call(event: T): Boolean {
         classListenerMap[event.javaClass]?.forEach {
             if (!(it.ignoreCancelled && event.cancelled))
-                (it as EventListener<T>).handler(event)
+                (it as EventListener<T>).handle(event)
         }
         return !event.cancelled
     }
@@ -23,13 +22,8 @@ object GearyEventManager {
         }
     }
 
-    @JvmOverloads
-    fun <T : Event> register(plugin: Plugin, clazz: Class<T>, listener: (T) -> Unit, ignoreCancelled: Boolean = true, priority: EventPriority = EventPriority.NORMAL) {
-        register(clazz, EventListener(plugin, listener, ignoreCancelled, priority))
-    }
-
-    inline fun <reified T : Event> register(plugin: Plugin, noinline listener: (T) -> Unit, ignoreCancelled: Boolean = true, priority: EventPriority = EventPriority.NORMAL) {
-        register(T::class.java, EventListener(plugin, listener, ignoreCancelled, priority))
+    inline fun <reified T : Event> register(listener: EventListener<T>) {
+        register(T::class.java, listener)
     }
 
     fun unregister(plugin: Plugin) {

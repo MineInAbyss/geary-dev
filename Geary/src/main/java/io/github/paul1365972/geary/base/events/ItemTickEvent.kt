@@ -1,6 +1,6 @@
-package com.mineinabyss.geary.base.events
+package io.github.paul1365972.geary.base.events
 
-import com.mineinabyss.geary.event.Event
+import io.github.paul1365972.geary.event.Event
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
