@@ -5,9 +5,11 @@ import com.mineinabyss.geary.base.events.ItemTickEvent
 import com.mineinabyss.geary.event.PluginDisableListener
 import org.bukkit.plugin.java.JavaPlugin
 
-internal lateinit var PLUGIN: Geary
-
 class Geary : JavaPlugin() {
+    internal companion object {
+        lateinit var PLUGIN: Geary
+    }
+
     override fun onLoad() {
         PLUGIN = this
     }

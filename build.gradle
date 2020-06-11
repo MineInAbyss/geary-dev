@@ -52,6 +52,7 @@ publishing {
 repositories {
     mavenLocal()
     mavenCentral()
+    jcenter()
     maven {
         name 'spigotmc-repo'
         url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
