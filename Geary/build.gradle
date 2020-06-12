@@ -71,6 +71,6 @@ dependencies {
 
 import org.apache.tools.ant.filters.ReplaceTokens
 
-    processResources {
-        filter ReplaceTokens, tokens: [version: version]
-    }
+processResources {
+    filter ReplaceTokens, tokens: [version: version]
+}
