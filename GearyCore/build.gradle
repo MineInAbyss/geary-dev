@@ -55,14 +55,20 @@ repositories {
         name 'sonatype'
         url 'https://oss.sonatype.org/content/groups/public/'
     }
+    // TODO use real repo later
+    maven {
+        name 'jitpack'
+        url 'https://jitpack.io/'
+    }
 }
 
 dependencies {
     compileOnly "org.spigotmc:spigot-api:$serverVersion"
 
-    //implementation('io.github.paul1365972:geary:1.0-SNAPSHOT')
+    // implementation('io.github.paul1365972:geary:1.0-SNAPSHOT')
     implementation project(':Geary')
-    implementation 'io.github.paul1365972:story:1.0-SNAPSHOT'
+    // TODO implementation 'io.github.paul1365972:story:1.0-SNAPSHOT'
+    implementation 'com.github.paul1365972:story:master-SNAPSHOT'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxserializationVersion"
