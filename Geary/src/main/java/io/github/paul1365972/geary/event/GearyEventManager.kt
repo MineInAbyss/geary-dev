@@ -1,39 +1,38 @@
 package io.github.paul1365972.geary.event
 
+import io.github.paul1365972.geary.event.listener.EventListener
+import io.github.paul1365972.geary.event.listener.EventPriority
 import org.bukkit.plugin.Plugin
-import java.util.*
-import java.util.stream.Stream
 
 object GearyEventManager {
-    private val classListenerMap = mutableMapOf<Class<*>, PriorityQueue<EventListener<*>>>()
+    private val listeners = mutableListOf<EventListener>()
+    private val listenerMap = mutableMapOf<EventPriority, MutableList<EventListener>>()
 
-    @Suppress("UNCHECKED_CAST")
-    fun <T : EventI> call(event: T): Boolean {
-        classListenerMap[event.javaClass]?.forEach {
-            if (!(it.ignoreCancelled && event.cancelled))
-                (it as EventListener<T>).handle(event)
-        }
-        return !event.cancelled
-    }
-
-    fun <T : EventI> register(clazz: Class<T>, listener: EventListener<T>) {
-        Stream.iterate<Class<*>>(clazz, { it.superclass != null }, { it.superclass })
-                .flatMap { Arrays.stream(it.interfaces) }
-                .distinct()
-                .filter { EventI::class.java.isAssignableFrom(it) }
-                .forEach {
-                    classListenerMap.computeIfAbsent(it) { PriorityQueue() } += listener
+    fun call(event: Event) {
+        EventPriority.values().forEach { priority ->
+            listenerMap[priority]?.let { listenerGroup ->
+                val left = listenerGroup.toMutableList()
+                while (left.isNotEmpty()) {
+                    val listener = left.lastOrNull {
+                        it.family.matches(event.getKeys())
+                                && it.ignoreCancelled == event.get<CancelledEventComponent>()?.cancelled ?: true
+                    } ?: break
+                    left.removeAt(left.lastIndex)
+                    listener.handle(event)
                 }
+            }
+        }
     }
 
-    inline fun <reified T : EventI> register(listener: EventListener<T>) {
-        register(T::class.java, listener)
+    fun register(listener: EventListener) {
+        listeners.add(listener)
+        listenerMap.computeIfAbsent(listener.priority) { mutableListOf() } += listener
     }
 
     fun unregister(plugin: Plugin) {
-        classListenerMap.values.removeIf { queue ->
-            queue.removeIf { it.plugin == plugin }
-            queue.isEmpty()
+        listeners.removeIf { it.plugin == plugin }
+        listenerMap.values.removeIf { listenerGroup ->
+            listenerGroup.removeIf { it.plugin == plugin } && listenerGroup.isEmpty()
         }
     }
 }

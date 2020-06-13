@@ -2,5 +2,6 @@ name: Geary
 version: @version@
 main: io.github.paul1365972.geary.Geary
 api-version: 1.15
+depend: [Story]
 authors: [Paul1365972]
 description: ECS

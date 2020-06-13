@@ -1,31 +1,37 @@
 package io.github.paul1365972.gearycore
 
-import io.github.paul1365972.geary.Geary
-import io.github.paul1365972.geary.ecs.PlayerItemEntity
+import io.github.paul1365972.geary.GearyService
+import io.github.paul1365972.geary.event.Event
 import io.github.paul1365972.geary.event.GearyEventManager
-import io.github.paul1365972.gearycore.components.DurabilityListener
-import io.github.paul1365972.gearycore.events.tick.EntityTickEvent
-import io.github.paul1365972.gearycore.events.tick.ItemTickEvent
-import org.bukkit.plugin.Plugin
+import io.github.paul1365972.gearycore.components.BlazingExploderFireListener
+import io.github.paul1365972.gearycore.components.BlazingExploderUseListener
+import io.github.paul1365972.gearycore.components.DurabilityItemDegrader
+import io.github.paul1365972.gearycore.events.EntityEventComponent
+import io.github.paul1365972.gearycore.events.ItemEventComponent
+import io.github.paul1365972.gearycore.events.PlayerOwnedComponent
+import io.github.paul1365972.gearycore.events.TickEventComponent
 import org.bukkit.plugin.java.JavaPlugin
 
-private lateinit var INSTANCE: GearyCore
-
 class GearyCore : JavaPlugin() {
-    companion object : Plugin by INSTANCE
+    companion object {
+        lateinit var INSTANCE: GearyCore
+    }
 
     override fun onLoad() {
         INSTANCE = this
     }
 
     override fun onEnable() {
-        GearyEventManager.register(DurabilityListener())
+        GearyEventManager.register(DurabilityItemDegrader())
+        GearyEventManager.register(BlazingExploderUseListener())
+        GearyEventManager.register(BlazingExploderFireListener())
+        server.pluginManager.registerEvents(ActionListener(), this)
         server.scheduler.scheduleSyncRepeatingTask(this, {
-            Geary.forActiveItems { itemStack, inventory, player ->
-                ItemTickEvent(PlayerItemEntity(itemStack, inventory, player)).call()
+            GearyService.forPotentiallyActiveItems { itemStack, _, player ->
+                Event(TickEventComponent(), ItemEventComponent(itemStack), PlayerOwnedComponent(player)).call()
             }
-            Geary.forActiveEntities { entity ->
-                EntityTickEvent(entity).call()
+            GearyService.forPotentiallyActiveEntities { entity ->
+                Event(TickEventComponent(), EntityEventComponent(entity)).call()
             }
         }, 1, 1)
     }
