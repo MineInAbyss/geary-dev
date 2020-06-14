@@ -9,7 +9,6 @@ import io.github.paul1365972.gearycore.events.TickEventAttribute
 import io.github.paul1365972.gearycore.systems.blazereap.BlazingExploderFireListener
 import io.github.paul1365972.gearycore.systems.blazereap.BlazingExploderUseListener
 import io.github.paul1365972.gearycore.systems.cooldown.CooldownApplier
-import io.github.paul1365972.gearycore.systems.cooldown.CooldownReducer
 import io.github.paul1365972.gearycore.systems.durability.DurabilityItemDegrader
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -21,7 +20,6 @@ class GearyCore : JavaPlugin() {
         GearyEventManager.register(BlazingExploderUseListener())
         GearyEventManager.register(BlazingExploderFireListener())
         GearyEventManager.register(CooldownApplier())
-        GearyEventManager.register(CooldownReducer())
 
         server.pluginManager.registerEvents(ActionListener(), this)
         server.scheduler.scheduleSyncRepeatingTask(this, {

@@ -14,7 +14,7 @@ object CooldownKey : CborDataKey<CooldownComponent>(GearyCorePlugin, "cooldown",
 
 @Serializable
 data class CooldownComponent(
-        var remaining: Int,
+        var nextUse: Long,
         var cooldown: Int
 ) : Component<BlazingExploderComponent>
 

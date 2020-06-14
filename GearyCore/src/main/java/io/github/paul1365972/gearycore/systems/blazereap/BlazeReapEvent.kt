@@ -15,6 +15,7 @@ import io.github.paul1365972.gearycore.systems.cooldown.cooldownComponent
 import io.github.paul1365972.gearycore.systems.durability.DurabilityUseEventAttribute
 import org.bukkit.Location
 import org.bukkit.entity.LivingEntity
+import kotlin.math.roundToLong
 
 data class BlazingExploderFireEventAttribute(
         var origin: Location,
@@ -30,8 +31,9 @@ class BlazingExploderUseListener : EventListener(GearyCorePlugin,
         item.blazingExploderComponent?.let { blazingExploder ->
             event.remove<UseEventAttribute>()
             val entity = event.get<EntitySourceEventAttribute>()!!.entity
-            item.cooldownComponent?.let { (remaining, max) ->
-                if (remaining > 0) return else event.add(CooldownEventAttribute(max))
+            item.cooldownComponent?.let { (nextUse, max) ->
+                //TODO
+                if (nextUse >= (System.currentTimeMillis() / 1000.0 * 20).roundToLong()) return else event.add(CooldownEventAttribute(max))
             }
             val location = if (entity is LivingEntity) entity.eyeLocation else entity.location
             event.add(BlazingExploderFireEventAttribute(location, blazingExploder.strength))
