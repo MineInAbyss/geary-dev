@@ -1,21 +1,24 @@
 package io.github.paul1365972.geary.event
 
+import io.github.paul1365972.geary.event.attributes.CancelledEventAttribute
 import io.github.paul1365972.geary.event.listener.EventListener
-import io.github.paul1365972.geary.event.listener.EventPriority
+import io.github.paul1365972.geary.event.listener.EventPhase
 import org.bukkit.plugin.Plugin
+import java.util.*
 
 object GearyEventManager {
     private val listeners = mutableListOf<EventListener>()
-    private val listenerMap = mutableMapOf<EventPriority, MutableList<EventListener>>()
+    private val listenerMap = mutableMapOf<EventPhase, PriorityQueue<EventListener>>()
 
+    @JvmStatic
     fun call(event: Event) {
-        EventPriority.values().forEach { priority ->
+        EventPhase.values().forEach { priority ->
             listenerMap[priority]?.let { listenerGroup ->
                 val left = listenerGroup.toMutableList()
                 while (left.isNotEmpty()) {
                     val listener = left.lastOrNull {
                         it.family.matches(event.getKeys())
-                                && it.ignoreCancelled == event.get<CancelledEventComponent>()?.cancelled ?: true
+                                && it.ignoreCancelled == event.get<CancelledEventAttribute>()?.cancelled ?: true
                     } ?: break
                     left.removeAt(left.lastIndex)
                     listener.handle(event)
@@ -24,11 +27,13 @@ object GearyEventManager {
         }
     }
 
+    @JvmStatic
     fun register(listener: EventListener) {
         listeners.add(listener)
-        listenerMap.computeIfAbsent(listener.priority) { mutableListOf() } += listener
+        listenerMap.computeIfAbsent(listener.phase) { PriorityQueue(compareBy { it.priority }) } += listener
     }
 
+    @JvmStatic
     fun unregister(plugin: Plugin) {
         listeners.removeIf { it.plugin == plugin }
         listenerMap.values.removeIf { listenerGroup ->

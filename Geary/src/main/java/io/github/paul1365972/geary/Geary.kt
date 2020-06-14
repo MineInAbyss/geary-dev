@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin
 class Geary : JavaPlugin(), GearyService {
 
     override fun onEnable() {
+        GearyPlugin.Holder.INSTANCE = this
         server.servicesManager.register(GearyService::class.java, this, this, ServicePriority.Lowest)
         server.pluginManager.registerEvents(PluginDisableListener(), this)
     }

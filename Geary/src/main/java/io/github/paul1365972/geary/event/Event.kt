@@ -1,48 +1,50 @@
 package io.github.paul1365972.geary.event
 
+import io.github.paul1365972.geary.event.attributes.EventAttribute
+
 class Event {
 
-    constructor(components: Set<EventComponent>) {
-        components.forEach { this += it }
+    constructor(attributes: Set<EventAttribute>) {
+        attributes.forEach { this += it }
     }
 
-    constructor(vararg components: EventComponent) : this(components.toSet())
+    constructor(vararg attributes: EventAttribute) : this(attributes.toSet())
 
-    private val components = mutableMapOf<Class<out EventComponent>, EventComponent>()
+    private val attributes = mutableMapOf<Class<out EventAttribute>, EventAttribute>()
 
-    fun getKeys(): Set<Class<out EventComponent>> = components.keys.toSet()
+    fun getKeys(): Set<Class<out EventAttribute>> = attributes.keys.toSet()
 
-    fun getComponents(): Collection<EventComponent> = components.values.toList()
+    fun getAttributes(): Collection<EventAttribute> = attributes.values.toList()
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : EventComponent> get(type: Class<T>): T? = components[type] as T?
+    fun <T : EventAttribute> get(type: Class<T>): T? = attributes[type] as T?
 
-    inline fun <reified T : EventComponent> get(): T? = get(T::class.java)
+    inline fun <reified T : EventAttribute> get(): T? = get(T::class.java)
 
-    fun <T : EventComponent> has(type: Class<T>): Boolean = components.containsKey(type)
+    fun <T : EventAttribute> has(type: Class<T>): Boolean = attributes.containsKey(type)
 
-    fun <T : EventComponent> ifPresent(type: Class<T>, function: (T) -> Unit) {
+    fun <T : EventAttribute> ifPresent(type: Class<T>, function: (T) -> Unit) {
         get(type)?.let { function(it) }
     }
 
-    inline fun <reified T : EventComponent> ifPresent(noinline function: (T) -> Unit) {
+    inline fun <reified T : EventAttribute> ifPresent(noinline function: (T) -> Unit) {
         ifPresent(T::class.java, function)
     }
 
-    fun <T : EventComponent> add(type: Class<T>, component: T) {
-        components[type] = component
+    fun <T : EventAttribute> add(type: Class<T>, attribute: T) {
+        attributes[type] = attribute
     }
 
-    operator fun <T : EventComponent> plusAssign(component: T) {
-        add(component)
+    operator fun <T : EventAttribute> plusAssign(attribute: T) {
+        add(attribute)
     }
 
-    fun add(component: EventComponent) = add(component.javaClass, component)
+    fun add(attribute: EventAttribute) = add(attribute.javaClass, attribute)
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : EventComponent> remove(type: Class<T>): T? = components.remove(type) as T?
+    fun <T : EventAttribute> remove(type: Class<T>): T? = attributes.remove(type) as T?
 
-    inline fun <reified T : EventComponent> remove(): T? = remove(T::class.java)
+    inline fun <reified T : EventAttribute> remove(): T? = remove(T::class.java)
 
     fun call() = GearyEventManager.call(this)
 }
