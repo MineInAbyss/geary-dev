@@ -27,7 +27,8 @@ class DurabilityItemDegrader : EventListener(GearyCorePlugin,
             val durabilityUseComponent = event.get<DurabilityUseEventAttribute>()!!
             durability = max(0, durability - durabilityUseComponent.durabilityUsage)
             if (durability <= 0) {
-                item.amount = 0
+                item.amount--
+                durability = maxDurability
                 return
             } else {
                 val meta = item.itemMeta

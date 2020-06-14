@@ -17,7 +17,7 @@ object GearyEventManager {
                 val left = listenerGroup.toMutableList()
                 while (left.isNotEmpty()) {
                     val listener = left.lastOrNull {
-                        it.family.matches(event.getKeys())
+                        it.family.matches(event.attributes.keys)
                                 && it.ignoreCancelled == event.get<CancelledEventAttribute>()?.cancelled ?: true
                     } ?: break
                     left.removeAt(left.lastIndex)

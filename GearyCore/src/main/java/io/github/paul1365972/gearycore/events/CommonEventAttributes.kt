@@ -2,19 +2,18 @@ package io.github.paul1365972.gearycore.events
 
 import io.github.paul1365972.geary.event.attributes.EventAttribute
 import org.bukkit.entity.Entity
-import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-data class EntityEventAttribute(
-        var entity: Entity
-) : EventAttribute
+class TickEventAttribute : EventAttribute
 
 data class ItemEventAttribute(
         var itemStack: ItemStack
 ) : EventAttribute
 
-data class PlayerOwnedAttribute(
-        val player: Player
+data class EntitySourceEventAttribute(
+        var entity: Entity
 ) : EventAttribute
 
-class TickEventAttribute : EventAttribute
+data class EntityTargetEventAttribute(
+        var entity: Entity
+) : EventAttribute
