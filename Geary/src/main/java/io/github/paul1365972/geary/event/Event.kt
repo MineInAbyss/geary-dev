@@ -23,6 +23,8 @@ class Event {
 
     fun <T : EventAttribute> has(type: Class<T>): Boolean = attributes.containsKey(type)
 
+    inline fun <reified T : EventAttribute> has(): Boolean = has(T::class.java)
+
     fun <T : EventAttribute> ifPresent(type: Class<T>, function: (T) -> Unit) {
         get(type)?.let { function(it) }
     }

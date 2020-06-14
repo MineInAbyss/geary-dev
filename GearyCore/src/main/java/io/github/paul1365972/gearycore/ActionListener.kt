@@ -20,14 +20,15 @@ class ActionListener : Listener {
 
     @EventHandler
     fun onClick(event: PlayerInteractEvent) {
-        if (event.hand == EquipmentSlot.HAND) {
-            when (event.action) {
-                Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK -> {
-                    Event(PlayerOwnedAttribute(event.player), EntityEventAttribute(event.player), UseEventAttribute()).apply {
-                        event.item?.let { this += ItemEventAttribute(it) }
-                    }.call()
+        if (event.hand == EquipmentSlot.HAND && event.hasItem()) {
+            if (event.action == Action.RIGHT_CLICK_AIR || event.action == Action.RIGHT_CLICK_BLOCK) {
+                val e = Event(UseEventAttribute(), ItemEventAttribute(event.item!!),
+                        PlayerOwnedAttribute(event.player), EntityEventAttribute(event.player))
+                e.call()
+                if (!e.has<UseEventAttribute>()) {
+                    event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY)
+                    event.setUseItemInHand(org.bukkit.event.Event.Result.DENY)
                 }
-                else -> Unit
             }
         }
         event.item?.let {
