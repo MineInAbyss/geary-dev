@@ -23,17 +23,19 @@ data class BlazingExploderFireEventAttribute(
 ) : EventAttribute
 
 
-class BlazingExploderUseListener : EventListener(GearyCorePlugin,
+class BlazingExploderUseListener : EventListener(
+        GearyCorePlugin,
         EventAttributeFamily(setOf(UseEventAttribute::class.java, ItemEventAttribute::class.java, EntitySourceEventAttribute::class.java), setOf()),
-        EventPhase.INCUBATION, EventPriority.EARLIER) {
+        EventPhase.INCUBATION,
+        EventPriority.EARLIER
+) {
     override fun handle(event: Event) {
         val item = event.get<ItemEventAttribute>()!!.itemStack
-        item.blazingExploderComponent?.let { blazingExploder ->
+        item.blazingExploderComponent.get().let { blazingExploder ->
             event.remove<UseEventAttribute>()
             val entity = event.get<EntitySourceEventAttribute>()!!.entity
-            item.cooldownComponent?.let { (nextUse, max) ->
-                //TODO
-                if (nextUse >= (System.currentTimeMillis() / 1000.0 * 20).roundToLong()) return else event.add(CooldownEventAttribute(max))
+            item.cooldownComponent.modify {
+                if (nextUse >= (System.currentTimeMillis() / 1000.0 * 20).roundToLong()) return else event.add(CooldownEventAttribute(cooldown))
             }
             val location = if (entity is LivingEntity) entity.eyeLocation else entity.location
             event.add(BlazingExploderFireEventAttribute(location, blazingExploder.strength))
@@ -43,9 +45,11 @@ class BlazingExploderUseListener : EventListener(GearyCorePlugin,
 }
 
 
-class BlazingExploderFireListener : EventListener(GearyCorePlugin,
+class BlazingExploderFireListener : EventListener(
+        GearyCorePlugin,
         EventAttributeFamily(setOf(BlazingExploderFireEventAttribute::class.java)),
-        EventPhase.EXECUTION) {
+        EventPhase.EXECUTION
+) {
     override fun handle(event: Event) {
         val fire = event.get<BlazingExploderFireEventAttribute>()!!
 

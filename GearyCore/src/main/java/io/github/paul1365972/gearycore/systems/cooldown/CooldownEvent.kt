@@ -14,16 +14,16 @@ data class CooldownEventAttribute(
 ) : EventAttribute
 
 
-class CooldownApplier : EventListener(GearyCorePlugin,
+class CooldownApplier : EventListener(
+        GearyCorePlugin,
         EventAttributeFamily(setOf(CooldownEventAttribute::class.java, ItemEventAttribute::class.java)),
-        EventPhase.EXECUTION) {
+        EventPhase.EXECUTION
+) {
     override fun handle(event: Event) {
         val item = event.get<ItemEventAttribute>()!!.itemStack
         val cooldown = event.get<CooldownEventAttribute>()!!.cooldown
-        item.cooldownComponent?.let {
-            //TODO
-            it.nextUse = (System.currentTimeMillis() / 1000.0 * 20 + cooldown).roundToLong()
-            item.cooldownComponent = it
+        item.cooldownComponent.modify {
+            nextUse = (System.currentTimeMillis() / 1000.0 * 20 + cooldown).roundToLong()
         }
     }
 }

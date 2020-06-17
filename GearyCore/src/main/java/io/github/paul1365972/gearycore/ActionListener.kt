@@ -40,9 +40,9 @@ class ActionListener : Listener {
     fun test(event: PlayerInteractEvent) {
         event.item?.let {
             if (event.clickedBlock?.type == Material.DIAMOND_BLOCK) {
-                it.blazingExploderComponent = BlazingExploderComponent(1f)
-                it.durabilityComponent = DurabilityComponent(60, 60)
-                it.cooldownComponent = CooldownComponent(0, 50)
+                it.blazingExploderComponent.set(BlazingExploderComponent(1f))
+                it.durabilityComponent.set(DurabilityComponent(60, 60))
+                it.cooldownComponent.set(CooldownComponent(0, 50))
                 event.player.sendMessage("Applied")
             }
         }

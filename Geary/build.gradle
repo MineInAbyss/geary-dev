@@ -40,10 +40,6 @@ publishing {
 }
 
 repositories {
-    mavenCentral()
-}
-
-repositories {
     mavenLocal()
     mavenCentral()
     jcenter()
