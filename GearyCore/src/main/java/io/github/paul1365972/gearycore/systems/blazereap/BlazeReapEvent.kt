@@ -31,7 +31,7 @@ class BlazingExploderUseListener : EventListener(
 ) {
     override fun handle(event: Event) {
         val item = event.get<ItemEventAttribute>()!!.itemStack
-        item.blazingExploderComponent.get().let { blazingExploder ->
+        item.blazingExploderComponent.get()?.let { blazingExploder ->
             event.remove<UseEventAttribute>()
             val entity = event.get<EntitySourceEventAttribute>()!!.entity
             item.cooldownComponent.modify {

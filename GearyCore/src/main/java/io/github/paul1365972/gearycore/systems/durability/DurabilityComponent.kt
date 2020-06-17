@@ -3,10 +3,9 @@ package io.github.paul1365972.gearycore.systems.durability
 import io.github.paul1365972.geary.ecs.Component
 import io.github.paul1365972.gearycore.GearyCorePlugin
 import io.github.paul1365972.story.StoryService
-import io.github.paul1365972.story.access.DataAccess
-import io.github.paul1365972.story.access.DataAccessI
 import io.github.paul1365972.story.access.InstanceAccess
 import io.github.paul1365972.story.key.CborDataKey
+import kotlinx.serialization.Required
 import kotlinx.serialization.Serializable
 import org.bukkit.inventory.ItemStack
 
@@ -22,7 +21,7 @@ object DurabilityKey : CborDataKey<DurabilityComponent>(
 @Serializable
 data class DurabilityComponent(
         var maxDurability: Int,
-        var durability: Int = maxDurability
+        @Required var durability: Int = maxDurability
 ) : Component<DurabilityComponent>
 
 
