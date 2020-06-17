@@ -2,7 +2,7 @@ package io.github.paul1365972.gearycore
 
 import io.github.paul1365972.geary.event.Event
 import io.github.paul1365972.gearycore.events.EntitySourceEventAttribute
-import io.github.paul1365972.gearycore.events.ItemEventAttribute
+import io.github.paul1365972.gearycore.events.ItemSourceEventAttribute
 import io.github.paul1365972.gearycore.events.UseEventAttribute
 import io.github.paul1365972.gearycore.systems.blazereap.BlazingExploderComponent
 import io.github.paul1365972.gearycore.systems.blazereap.blazingExploderComponent
@@ -24,7 +24,7 @@ class ActionListener : Listener {
         if (event.item?.itemMeta?.persistentDataContainer?.isEmpty != false) return
         if (event.hand == EquipmentSlot.HAND && event.hasItem()) {
             if (event.action == Action.RIGHT_CLICK_AIR || event.action == Action.RIGHT_CLICK_BLOCK) {
-                val e = Event(UseEventAttribute(), ItemEventAttribute(event.item!!),
+                val e = Event(UseEventAttribute(), ItemSourceEventAttribute(event.item!!),
                         EntitySourceEventAttribute(event.player))
                 e.call()
                 if (!e.has<UseEventAttribute>()) {

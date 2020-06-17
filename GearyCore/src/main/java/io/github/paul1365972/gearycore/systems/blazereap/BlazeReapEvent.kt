@@ -8,7 +8,7 @@ import io.github.paul1365972.geary.event.listener.EventPhase
 import io.github.paul1365972.geary.event.listener.EventPriority
 import io.github.paul1365972.gearycore.GearyCorePlugin
 import io.github.paul1365972.gearycore.events.EntitySourceEventAttribute
-import io.github.paul1365972.gearycore.events.ItemEventAttribute
+import io.github.paul1365972.gearycore.events.ItemSourceEventAttribute
 import io.github.paul1365972.gearycore.events.UseEventAttribute
 import io.github.paul1365972.gearycore.systems.cooldown.CooldownEventAttribute
 import io.github.paul1365972.gearycore.systems.cooldown.cooldownComponent
@@ -18,19 +18,19 @@ import org.bukkit.entity.LivingEntity
 import kotlin.math.roundToLong
 
 data class BlazingExploderFireEventAttribute(
-        var origin: Location,
+        var location: Location,
         var strength: Float
 ) : EventAttribute
 
 
 class BlazingExploderUseListener : EventListener(
         GearyCorePlugin,
-        EventAttributeFamily(setOf(UseEventAttribute::class.java, ItemEventAttribute::class.java, EntitySourceEventAttribute::class.java), setOf()),
+        EventAttributeFamily(setOf(UseEventAttribute::class.java, ItemSourceEventAttribute::class.java, EntitySourceEventAttribute::class.java), setOf()),
         EventPhase.INCUBATION,
         EventPriority.EARLIER
 ) {
     override fun handle(event: Event) {
-        val item = event.get<ItemEventAttribute>()!!.itemStack
+        val item = event.get<ItemSourceEventAttribute>()!!.itemStack
         item.blazingExploderComponent.get()?.let { blazingExploder ->
             event.remove<UseEventAttribute>()
             val entity = event.get<EntitySourceEventAttribute>()!!.entity
@@ -39,7 +39,7 @@ class BlazingExploderUseListener : EventListener(
             }
             val location = if (entity is LivingEntity) entity.eyeLocation else entity.location
             event.add(BlazingExploderFireEventAttribute(location, blazingExploder.strength))
-            event.modify({ DurabilityUseEventAttribute(1) }) { it.durabilityUsage += 1 }
+            event.add(DurabilityUseEventAttribute())
         }
     }
 }
@@ -53,7 +53,7 @@ class BlazingExploderFireListener : EventListener(
     override fun handle(event: Event) {
         val fire = event.get<BlazingExploderFireEventAttribute>()!!
 
-        val loc = fire.origin.clone()
+        val loc = fire.location.clone()
         var runs = 8
         GearyCorePlugin.server.scheduler.runTaskTimer(GearyCorePlugin, { task ->
             loc.add(loc.direction.multiply(2))

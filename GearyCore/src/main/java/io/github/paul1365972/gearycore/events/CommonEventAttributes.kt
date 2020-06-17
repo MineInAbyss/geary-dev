@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack
 
 class TickEventAttribute : EventAttribute
 
-data class ItemEventAttribute(
+data class ItemSourceEventAttribute(
         var itemStack: ItemStack
 ) : EventAttribute
 

@@ -4,7 +4,7 @@ import io.github.paul1365972.geary.GearyPlugin
 import io.github.paul1365972.geary.event.Event
 import io.github.paul1365972.geary.event.GearyEventManager
 import io.github.paul1365972.gearycore.events.EntitySourceEventAttribute
-import io.github.paul1365972.gearycore.events.ItemEventAttribute
+import io.github.paul1365972.gearycore.events.ItemSourceEventAttribute
 import io.github.paul1365972.gearycore.events.TickEventAttribute
 import io.github.paul1365972.gearycore.systems.blazereap.BlazingExploderFireListener
 import io.github.paul1365972.gearycore.systems.blazereap.BlazingExploderUseListener
@@ -24,7 +24,7 @@ class GearyCore : JavaPlugin() {
         server.pluginManager.registerEvents(ActionListener(), this)
         server.scheduler.scheduleSyncRepeatingTask(this, {
             GearyPlugin.forPotentiallyActiveItems { itemStack, _, player ->
-                Event(TickEventAttribute(), ItemEventAttribute(itemStack), EntitySourceEventAttribute(player)).call()
+                Event(TickEventAttribute(), ItemSourceEventAttribute(itemStack), EntitySourceEventAttribute(player)).call()
             }
             GearyPlugin.forPotentiallyActiveEntities { entity ->
                 Event(TickEventAttribute(), EntitySourceEventAttribute(entity)).call()

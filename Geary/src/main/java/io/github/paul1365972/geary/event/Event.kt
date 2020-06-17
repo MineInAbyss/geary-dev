@@ -20,10 +20,6 @@ class Event {
 
     fun <T : EventAttribute> has(type: Class<T>): Boolean = attributes.containsKey(type)
 
-    fun <T : EventAttribute> ifPresent(type: Class<T>, function: (T) -> Unit) {
-        get(type)?.let { function(it) }
-    }
-
     fun <T : EventAttribute> add(type: Class<T>, attribute: T) {
         if (attributes.containsKey(type)) GearyPlugin.logger.warning("Replaced EventAttribute(${type.name}) with Event.add()")
         attributes[type] = attribute
@@ -40,10 +36,6 @@ class Event {
 
     inline fun <reified T : EventAttribute> has(): Boolean = has(T::class.java)
 
-    inline fun <reified T : EventAttribute> ifPresent(noinline function: (T) -> Unit) {
-        ifPresent(T::class.java, function)
-    }
-
     inline fun <reified T : EventAttribute> remove(): T? = remove(T::class.java)
 
     inline fun <reified T : EventAttribute> modify(crossinline defaultValue: () -> T, crossinline modifyFunction: (T) -> Unit): T? {
@@ -57,5 +49,45 @@ class Event {
             mergeFunction(v2 as T, v1 as T)
             v2
         } as T?
+    }
+
+    inline fun <reified T1 : EventAttribute> where(block: (T1) -> Unit) {
+        get(T1::class.java)?.let(block)
+    }
+
+    inline fun <reified T1 : EventAttribute, reified T2 : EventAttribute> where(block: (T1, T2) -> Unit) {
+        where<T1> { t ->
+            get(T2::class.java)?.let { a ->
+                block(t, a)
+            }
+        }
+    }
+
+    inline fun <reified T1 : EventAttribute, reified T2 : EventAttribute,
+            reified T3 : EventAttribute> where(block: (T1, T2, T3) -> Unit) {
+        where<T1, T2> { t, u ->
+            get(T3::class.java)?.let { a ->
+                block(t, u, a)
+            }
+        }
+    }
+
+    inline fun <reified T1 : EventAttribute, reified T2 : EventAttribute,
+            reified T3 : EventAttribute, reified T4 : EventAttribute> where(block: (T1, T2, T3, T4) -> Unit) {
+        where<T1, T2, T3> { t, u, v ->
+            get(T4::class.java)?.let { a ->
+                block(t, u, v, a)
+            }
+        }
+    }
+
+    inline fun <reified T1 : EventAttribute, reified T2 : EventAttribute,
+            reified T3 : EventAttribute, reified T4 : EventAttribute,
+            reified T5 : EventAttribute> where(block: (T1, T2, T3, T4, T5) -> Unit) {
+        where<T1, T2, T3, T4> { t, u, v, w ->
+            get(T5::class.java)?.let { a ->
+                block(t, u, v, w, a)
+            }
+        }
     }
 }
