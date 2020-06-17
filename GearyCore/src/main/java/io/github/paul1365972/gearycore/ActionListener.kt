@@ -41,8 +41,8 @@ class ActionListener : Listener {
         event.item?.let {
             if (event.clickedBlock?.type == Material.DIAMOND_BLOCK) {
                 it.blazingExploderComponent.set(BlazingExploderComponent(1f))
-                it.durabilityComponent.set(DurabilityComponent(60, 60))
-                it.cooldownComponent.set(CooldownComponent(0, 50))
+                it.durabilityComponent.set(DurabilityComponent(60))
+                it.cooldownComponent.set(CooldownComponent(50))
                 event.player.sendMessage("Applied")
             }
         }

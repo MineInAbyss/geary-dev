@@ -21,8 +21,8 @@ object DurabilityKey : CborDataKey<DurabilityComponent>(
 
 @Serializable
 data class DurabilityComponent(
-        var durability: Int,
-        var maxDurability: Int
+        var maxDurability: Int,
+        var durability: Int = maxDurability
 ) : Component<DurabilityComponent>
 
 

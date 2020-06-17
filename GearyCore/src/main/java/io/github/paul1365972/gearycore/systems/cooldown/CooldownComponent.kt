@@ -19,8 +19,8 @@ object CooldownKey : CborDataKey<CooldownComponent>(
 
 @Serializable
 data class CooldownComponent(
-        var nextUse: Long,
-        var cooldown: Int
+        var cooldown: Int,
+        var nextUse: Long = 0
 ) : Component<BlazingExploderComponent>
 
 val ItemStack.cooldownComponent: InstanceAccess<CooldownComponent, ItemStack>
