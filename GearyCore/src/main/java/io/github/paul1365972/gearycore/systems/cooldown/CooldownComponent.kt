@@ -2,7 +2,6 @@ package io.github.paul1365972.gearycore.systems.cooldown
 
 import io.github.paul1365972.geary.ecs.Component
 import io.github.paul1365972.gearycore.GearyCorePlugin
-import io.github.paul1365972.gearycore.systems.blazereap.BlazingExploderComponent
 import io.github.paul1365972.story.StoryService
 import io.github.paul1365972.story.access.InstanceAccess
 import io.github.paul1365972.story.key.CborDataKey
@@ -21,7 +20,9 @@ object CooldownKey : CborDataKey<CooldownComponent>(
 data class CooldownComponent(
         var cooldown: Int,
         var nextUse: Long = 0
-) : Component<BlazingExploderComponent>
+) : Component<CooldownComponent> {
+    override fun key() = CooldownKey
+}
 
 val ItemStack.cooldownComponent: InstanceAccess<CooldownComponent, ItemStack>
     get() = InstanceAccess(StoryService.defaultItemStore, CooldownKey, this)

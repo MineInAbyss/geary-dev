@@ -2,7 +2,6 @@ package io.github.paul1365972.gearycore.systems.durability
 
 import io.github.paul1365972.geary.event.Event
 import io.github.paul1365972.geary.event.attributes.EventAttribute
-import io.github.paul1365972.geary.event.attributes.EventAttributeFamily
 import io.github.paul1365972.geary.event.listener.EventListener
 import io.github.paul1365972.geary.event.listener.EventPhase
 import io.github.paul1365972.gearycore.GearyCorePlugin
@@ -18,19 +17,15 @@ data class DurabilityUseEventAttribute(
 
 class DurabilityItemDegrader : EventListener(
         GearyCorePlugin,
-        EventAttributeFamily(setOf(ItemSourceEventAttribute::class.java, DurabilityUseEventAttribute::class.java)),
         EventPhase.EXECUTION
 ) {
-    override fun handle(event: Event) {
-        val itemComponent = event.get<ItemSourceEventAttribute>()!!
-        val item = itemComponent.itemStack
-
+    override fun handle(event: Event) = event.where<DurabilityUseEventAttribute, ItemSourceEventAttribute> { (durabilityUsage), (item) ->
         item.durabilityComponent.modify {
-            val durabilityUseComponent = event.get<DurabilityUseEventAttribute>()!!
             val meta = item.itemMeta
             if (meta is Damageable) {
-                //meta.damage = ((item.type.maxDurability) * (1 - remaining) + 0.5).roundToInt()
-                val ratio = 1.0 * durabilityUseComponent.durabilityUsage / maxDurability
+                //val remaining = 1.0 * durability / maxDurability
+                //meta.damage = (item.type.maxDurability * (1 - remaining) + 0.5).roundToInt()
+                val ratio = 1.0 * durabilityUsage / maxDurability
                 meta.damage += (item.type.maxDurability * ratio + 0.5).roundToInt()
                 if (meta.damage >= item.type.maxDurability) {
                     item.amount--
@@ -38,7 +33,7 @@ class DurabilityItemDegrader : EventListener(
                 }
                 item.itemMeta = meta
             } else {
-                durability = max(0, durability - durabilityUseComponent.durabilityUsage)
+                durability = max(0, durability - durabilityUsage)
                 if (durability <= 0) {
                     item.amount--
                     durability = maxDurability

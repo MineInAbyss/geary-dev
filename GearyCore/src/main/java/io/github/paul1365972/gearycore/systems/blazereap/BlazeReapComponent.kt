@@ -20,7 +20,9 @@ object BlazingExploderKey : CborDataKey<BlazingExploderComponent>(
 data class BlazingExploderComponent(
         var strength: Float = 1f,
         var destroyBlocks: Boolean = true
-) : Component<BlazingExploderComponent>
+) : Component<BlazingExploderComponent> {
+    override fun key() = BlazingExploderKey
+}
 
 val ItemStack.blazingExploderComponent: InstanceAccess<BlazingExploderComponent, ItemStack>
     get() = InstanceAccess(StoryService.defaultItemStore, BlazingExploderKey, this)

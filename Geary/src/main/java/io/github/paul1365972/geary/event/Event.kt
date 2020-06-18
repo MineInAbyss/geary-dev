@@ -12,6 +12,7 @@ class Event {
     constructor(vararg attributes: EventAttribute) : this(attributes.toSet())
 
     val attributes = mutableMapOf<Class<out EventAttribute>, EventAttribute>()
+    var cancelled = false
 
     fun call() = GearyEventManager.call(this)
 
@@ -51,43 +52,55 @@ class Event {
         } as T?
     }
 
-    inline fun <reified T1 : EventAttribute> where(block: (T1) -> Unit) {
-        get(T1::class.java)?.let(block)
+    inline fun <reified T1 : EventAttribute> where(block: (T1) -> Unit): Boolean {
+        get(T1::class.java)?.let {
+            block(it)
+            return true
+        }
+        return false
     }
 
-    inline fun <reified T1 : EventAttribute, reified T2 : EventAttribute> where(block: (T1, T2) -> Unit) {
+    inline fun <reified T1 : EventAttribute, reified T2 : EventAttribute> where(block: (T1, T2) -> Unit): Boolean {
         where<T1> { t ->
             get(T2::class.java)?.let { a ->
                 block(t, a)
+                return true
             }
         }
+        return false
     }
 
     inline fun <reified T1 : EventAttribute, reified T2 : EventAttribute,
-            reified T3 : EventAttribute> where(block: (T1, T2, T3) -> Unit) {
+            reified T3 : EventAttribute> where(block: (T1, T2, T3) -> Unit): Boolean {
         where<T1, T2> { t, u ->
             get(T3::class.java)?.let { a ->
                 block(t, u, a)
+                return true
             }
         }
+        return false
     }
 
     inline fun <reified T1 : EventAttribute, reified T2 : EventAttribute,
-            reified T3 : EventAttribute, reified T4 : EventAttribute> where(block: (T1, T2, T3, T4) -> Unit) {
+            reified T3 : EventAttribute, reified T4 : EventAttribute> where(block: (T1, T2, T3, T4) -> Unit): Boolean {
         where<T1, T2, T3> { t, u, v ->
             get(T4::class.java)?.let { a ->
                 block(t, u, v, a)
+                return true
             }
         }
+        return false
     }
 
     inline fun <reified T1 : EventAttribute, reified T2 : EventAttribute,
             reified T3 : EventAttribute, reified T4 : EventAttribute,
-            reified T5 : EventAttribute> where(block: (T1, T2, T3, T4, T5) -> Unit) {
+            reified T5 : EventAttribute> where(block: (T1, T2, T3, T4, T5) -> Unit): Boolean {
         where<T1, T2, T3, T4> { t, u, v, w ->
             get(T5::class.java)?.let { a ->
                 block(t, u, v, w, a)
+                return true
             }
         }
+        return false
     }
 }

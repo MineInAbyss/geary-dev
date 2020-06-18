@@ -22,7 +22,9 @@ object DurabilityKey : CborDataKey<DurabilityComponent>(
 data class DurabilityComponent(
         var maxDurability: Int,
         @Required var durability: Int = maxDurability
-) : Component<DurabilityComponent>
+) : Component<DurabilityComponent> {
+    override fun key() = DurabilityKey
+}
 
 
 val ItemStack.durabilityComponent: InstanceAccess<DurabilityComponent, ItemStack>

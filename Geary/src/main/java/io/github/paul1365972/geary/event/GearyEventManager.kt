@@ -1,6 +1,5 @@
 package io.github.paul1365972.geary.event
 
-import io.github.paul1365972.geary.event.attributes.CancelledEventAttribute
 import io.github.paul1365972.geary.event.listener.EventListener
 import io.github.paul1365972.geary.event.listener.EventPhase
 import org.bukkit.plugin.Plugin
@@ -17,11 +16,10 @@ object GearyEventManager {
                 val left = listenerGroup.toMutableList()
                 while (left.isNotEmpty()) {
                     val listener = left.lastOrNull {
-                        it.family.matches(event.attributes.keys)
-                                && it.ignoreCancelled == event.get<CancelledEventAttribute>()?.cancelled ?: true
+                        event.cancelled && !it.ignoreCancelled
                     } ?: break
-                    left.removeAt(left.lastIndex)
-                    listener.handle(event)
+                    if (listener.handle(event))
+                        left.removeAt(left.lastIndex)
                 }
             }
         }
