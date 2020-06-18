@@ -15,11 +15,10 @@ object GearyEventManager {
             listenerMap[priority]?.let { listenerGroup ->
                 val left = listenerGroup.toMutableList()
                 while (left.isNotEmpty()) {
-                    val listener = left.lastOrNull {
-                        event.cancelled && !it.ignoreCancelled
+                    val handledListener = left.firstOrNull {
+                        !(it.ignoreCancelled && event.cancelled) && it.handle(event)
                     } ?: break
-                    if (listener.handle(event))
-                        left.removeAt(left.lastIndex)
+                    left.remove(handledListener)
                 }
             }
         }

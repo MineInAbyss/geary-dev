@@ -19,8 +19,11 @@ class CooldownCanceller : EventListener(
 ) {
     override fun handle(event: Event) = event.where<UseCooldownEventAttribute, ItemSourceEventAttribute> { _, (item) ->
         item.cooldownComponent.modify {
-            nextUse = currentTicks() + cooldown
-            event.cancelled = true
+            val now = currentTicks()
+            if (now > nextUse)
+                nextUse = currentTicks() + cooldown
+            else
+                event.cancelled = true
         }
     }
 }

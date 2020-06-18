@@ -9,6 +9,8 @@ import io.github.paul1365972.gearycore.GearyCorePlugin
 import io.github.paul1365972.gearycore.events.EntitySourceEventAttribute
 import io.github.paul1365972.gearycore.events.ItemSourceEventAttribute
 import io.github.paul1365972.gearycore.events.UseEventAttribute
+import io.github.paul1365972.gearycore.systems.cooldown.UseCooldownEventAttribute
+import io.github.paul1365972.gearycore.systems.cooldown.cooldownComponent
 import io.github.paul1365972.gearycore.systems.durability.DurabilityUseEventAttribute
 import io.github.paul1365972.gearycore.util.move
 import org.bukkit.Location
@@ -32,6 +34,9 @@ class BlazingExploderUseListener : EventListener(
             val location = if (entity is LivingEntity) entity.eyeLocation else entity.location
             event.add(BlazingExploderFireEventAttribute(location, blazingExploder.strength, blazingExploder.destroyBlocks))
             event.add(DurabilityUseEventAttribute())
+            item.cooldownComponent.ifPresent {
+                event.add(UseCooldownEventAttribute(it.cooldown))
+            }
         }
     }
 }
