@@ -9,21 +9,23 @@ import io.github.paul1365972.gearycore.GearyCorePlugin
 import io.github.paul1365972.gearycore.events.ItemSourceEventAttribute
 import kotlin.math.roundToLong
 
-data class CooldownEventAttribute(
+data class ApplyCooldownEventAttribute(
         var cooldown: Int
 ) : EventAttribute
 
 
 class CooldownApplier : EventListener(
         GearyCorePlugin,
-        EventAttributeFamily(setOf(CooldownEventAttribute::class.java, ItemSourceEventAttribute::class.java)),
+        EventAttributeFamily(setOf(ApplyCooldownEventAttribute::class.java, ItemSourceEventAttribute::class.java)),
         EventPhase.EXECUTION
 ) {
     override fun handle(event: Event) {
         val item = event.get<ItemSourceEventAttribute>()!!.itemStack
-        val cooldown = event.get<CooldownEventAttribute>()!!.cooldown
+        val cooldown = event.get<ApplyCooldownEventAttribute>()!!.cooldown
         item.cooldownComponent.modify {
-            nextUse = (System.currentTimeMillis() / 1000.0 * 20 + cooldown).roundToLong()
+            nextUse = currentTicks() + cooldown
         }
     }
 }
+
+fun currentTicks() = (System.currentTimeMillis() / 1000.0 * 20).roundToLong()

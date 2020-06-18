@@ -10,15 +10,15 @@ import io.github.paul1365972.gearycore.GearyCorePlugin
 import io.github.paul1365972.gearycore.events.EntitySourceEventAttribute
 import io.github.paul1365972.gearycore.events.ItemSourceEventAttribute
 import io.github.paul1365972.gearycore.events.UseEventAttribute
-import io.github.paul1365972.gearycore.systems.cooldown.CooldownEventAttribute
+import io.github.paul1365972.gearycore.systems.cooldown.ApplyCooldownEventAttribute
 import io.github.paul1365972.gearycore.systems.cooldown.cooldownComponent
+import io.github.paul1365972.gearycore.systems.cooldown.currentTicks
 import io.github.paul1365972.gearycore.systems.durability.DurabilityUseEventAttribute
 import org.bukkit.FluidCollisionMode
 import org.bukkit.Location
 import org.bukkit.entity.LivingEntity
 import org.bukkit.util.BlockIterator
 import kotlin.math.ceil
-import kotlin.math.roundToLong
 
 data class BlazingExploderFireEventAttribute(
         var location: Location,
@@ -38,8 +38,8 @@ class BlazingExploderUseListener : EventListener(
         item.blazingExploderComponent.get()?.let { blazingExploder ->
             event.remove<UseEventAttribute>()
             val entity = event.get<EntitySourceEventAttribute>()!!.entity
-            item.cooldownComponent.modify {
-                if (nextUse >= (System.currentTimeMillis() / 1000.0 * 20).roundToLong()) return else event.add(CooldownEventAttribute(cooldown))
+            item.cooldownComponent.get()?.let {
+                if (it.nextUse >= currentTicks()) return else event.add(ApplyCooldownEventAttribute(it.cooldown))
             }
             val location = if (entity is LivingEntity) entity.eyeLocation else entity.location
             event.add(BlazingExploderFireEventAttribute(location, blazingExploder.strength, blazingExploder.destroyBlocks))
