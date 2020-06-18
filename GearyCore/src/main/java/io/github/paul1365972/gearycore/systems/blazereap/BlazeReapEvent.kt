@@ -13,8 +13,11 @@ import io.github.paul1365972.gearycore.events.UseEventAttribute
 import io.github.paul1365972.gearycore.systems.cooldown.CooldownEventAttribute
 import io.github.paul1365972.gearycore.systems.cooldown.cooldownComponent
 import io.github.paul1365972.gearycore.systems.durability.DurabilityUseEventAttribute
+import org.bukkit.FluidCollisionMode
 import org.bukkit.Location
 import org.bukkit.entity.LivingEntity
+import org.bukkit.util.BlockIterator
+import kotlin.math.ceil
 import kotlin.math.roundToLong
 
 data class BlazingExploderFireEventAttribute(
@@ -53,14 +56,28 @@ class BlazingExploderFireListener : EventListener(
 ) {
     override fun handle(event: Event) {
         val fire = event.get<BlazingExploderFireEventAttribute>()!!
+        val entity = event.get<EntitySourceEventAttribute>()?.entity
 
         val loc = fire.location.clone()
+        loc.add(loc.direction.multiply(2.0))
         var runs = 8
         GearyCorePlugin.server.scheduler.runTaskTimer(GearyCorePlugin, { task ->
-            loc.add(loc.direction.multiply(2))
             loc.world?.createExplosion(loc, fire.strength * 2f,
-                    false, fire.destroyBlocks, event.get<EntitySourceEventAttribute>()?.entity)
-            if (--runs <= 0 || !loc.block.isPassable) task.cancel()
+                    false, fire.destroyBlocks, entity)
+            move(loc, 2.0)
+            if (--runs <= 0) task.cancel()
         }, 1, 4)
+    }
+
+    fun move(loc: Location, length: Double) {
+        BlockIterator(loc, 0.0, ceil(length).toInt()).forEach { block ->
+            if (!block.isPassable) {
+                block.rayTrace(loc, loc.direction, length, FluidCollisionMode.NEVER)?.hitPosition?.let {
+                    loc.add(it.subtract(loc.toVector()))
+                    return
+                }
+            }
+        }
+        loc.add(loc.direction.multiply(length))
     }
 }

@@ -29,15 +29,20 @@ class DurabilityItemDegrader : EventListener(
             val durabilityUseComponent = event.get<DurabilityUseEventAttribute>()!!
             val meta = item.itemMeta
             if (meta is Damageable) {
-                //meta.damage = ((item.type.maxDurability + 1) * (1 - remaining)).roundToInt()
+                //meta.damage = ((item.type.maxDurability) * (1 - remaining) + 0.5).roundToInt()
                 val ratio = 1.0 * durabilityUseComponent.durabilityUsage / maxDurability
-                meta.damage -= (item.type.maxDurability * ratio).roundToInt()
+                meta.damage += (item.type.maxDurability * ratio + 0.5).roundToInt()
+                if (meta.damage >= item.type.maxDurability) {
+                    item.amount--
+                    meta.damage = 0
+                }
+                item.itemMeta = meta
             } else {
                 durability = max(0, durability - durabilityUseComponent.durabilityUsage)
-            }
-            if (durability <= 0) {
-                item.amount--
-                durability = maxDurability
+                if (durability <= 0) {
+                    item.amount--
+                    durability = maxDurability
+                }
             }
         }
     }
