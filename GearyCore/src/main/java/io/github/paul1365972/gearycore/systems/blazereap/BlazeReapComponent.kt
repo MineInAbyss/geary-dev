@@ -18,7 +18,8 @@ object BlazingExploderKey : CborDataKey<BlazingExploderComponent>(
 
 @Serializable
 data class BlazingExploderComponent(
-        var strength: Float = 1f
+        var strength: Float = 1f,
+        var destroyBlocks: Boolean = true
 ) : Component<BlazingExploderComponent>
 
 val ItemStack.blazingExploderComponent: InstanceAccess<BlazingExploderComponent, ItemStack>

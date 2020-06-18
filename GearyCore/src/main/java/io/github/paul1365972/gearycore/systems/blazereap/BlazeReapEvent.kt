@@ -19,7 +19,8 @@ import kotlin.math.roundToLong
 
 data class BlazingExploderFireEventAttribute(
         var location: Location,
-        var strength: Float
+        var strength: Float,
+        var destroyBlocks: Boolean
 ) : EventAttribute
 
 
@@ -38,7 +39,7 @@ class BlazingExploderUseListener : EventListener(
                 if (nextUse >= (System.currentTimeMillis() / 1000.0 * 20).roundToLong()) return else event.add(CooldownEventAttribute(cooldown))
             }
             val location = if (entity is LivingEntity) entity.eyeLocation else entity.location
-            event.add(BlazingExploderFireEventAttribute(location, blazingExploder.strength))
+            event.add(BlazingExploderFireEventAttribute(location, blazingExploder.strength, blazingExploder.destroyBlocks))
             event.add(DurabilityUseEventAttribute())
         }
     }
@@ -57,10 +58,9 @@ class BlazingExploderFireListener : EventListener(
         var runs = 8
         GearyCorePlugin.server.scheduler.runTaskTimer(GearyCorePlugin, { task ->
             loc.add(loc.direction.multiply(2))
-            if (--runs <= 0 || !loc.block.isPassable) task.cancel()
             loc.world?.createExplosion(loc, fire.strength * 2f,
-                    false, false, event.get<EntitySourceEventAttribute>()?.entity)
-
+                    false, fire.destroyBlocks, event.get<EntitySourceEventAttribute>()?.entity)
+            if (--runs <= 0 || !loc.block.isPassable) task.cancel()
         }, 1, 4)
     }
 }

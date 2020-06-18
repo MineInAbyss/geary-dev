@@ -27,17 +27,17 @@ class DurabilityItemDegrader : EventListener(
 
         item.durabilityComponent.modify {
             val durabilityUseComponent = event.get<DurabilityUseEventAttribute>()!!
-            durability = max(0, durability - durabilityUseComponent.durabilityUsage)
+            val meta = item.itemMeta
+            if (meta is Damageable) {
+                //meta.damage = ((item.type.maxDurability + 1) * (1 - remaining)).roundToInt()
+                val ratio = 1.0 * durabilityUseComponent.durabilityUsage / maxDurability
+                meta.damage -= (item.type.maxDurability * ratio).roundToInt()
+            } else {
+                durability = max(0, durability - durabilityUseComponent.durabilityUsage)
+            }
             if (durability <= 0) {
                 item.amount--
                 durability = maxDurability
-            } else {
-                val meta = item.itemMeta
-                if (meta is Damageable) {
-                    val remaining = 1.0 * durability / maxDurability
-                    meta.damage = ((item.type.maxDurability + 1) * (1 - remaining)).roundToInt()
-                    item.itemMeta = meta
-                }
             }
         }
     }

@@ -1,6 +1,7 @@
 package io.github.paul1365972.gearycore.events
 
 import io.github.paul1365972.geary.event.attributes.EventAttribute
+import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.inventory.ItemStack
 
@@ -16,4 +17,8 @@ data class EntitySourceEventAttribute(
 
 data class EntityTargetEventAttribute(
         var entity: Entity
+) : EventAttribute
+
+data class LocationSourceEventAttribute(
+        var location: Location
 ) : EventAttribute
