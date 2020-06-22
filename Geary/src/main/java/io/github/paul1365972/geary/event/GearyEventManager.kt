@@ -11,16 +11,20 @@ object GearyEventManager {
 
     @JvmStatic
     fun call(event: Event) {
-        EventPhase.values().forEach { priority ->
-            listenerMap[priority]?.let { listenerGroup ->
-                val left = listenerGroup.toMutableList()
-                while (left.isNotEmpty()) {
-                    val index = left.indexOfLast {
-                        !(it.ignoreCancelled && event.cancelled) && it.handle(event)
-                    }
-                    if (index < 0) break
-                    left.removeAt(index)
+        listenerMap[EventPhase.INCUBATION]?.let { listenerGroup ->
+            val left = listenerGroup.toMutableList()
+            while (left.isNotEmpty()) {
+                val index = left.indexOfLast {
+                    !(it.ignoreCancelled && event.cancelled) && it.handle(event)
                 }
+                if (index < 0) break
+                left.removeAt(index)
+            }
+        }
+        (EventPhase.values().toMutableList() - EventPhase.INCUBATION).forEach { priority ->
+            listenerMap[priority]?.forEach { listener ->
+                if (!(listener.ignoreCancelled && event.cancelled))
+                    listener.handle(event)
             }
         }
     }

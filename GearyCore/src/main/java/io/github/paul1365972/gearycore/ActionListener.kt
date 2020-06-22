@@ -1,11 +1,9 @@
 package io.github.paul1365972.gearycore
 
 import io.github.paul1365972.geary.event.Event
-import io.github.paul1365972.gearycore.events.EntitySourceEventAttribute
-import io.github.paul1365972.gearycore.events.ItemSourceEventAttribute
-import io.github.paul1365972.gearycore.events.LocationSourceEventAttribute
-import io.github.paul1365972.gearycore.events.UseEventAttribute
+import io.github.paul1365972.gearycore.events.*
 import io.github.paul1365972.gearycore.items.BlazeReapItem
+import io.github.paul1365972.gearycore.items.RopeItem
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -20,10 +18,14 @@ class ActionListener : Listener {
         if (event.item?.itemMeta?.persistentDataContainer?.isEmpty != false) return
         if (event.hand == EquipmentSlot.HAND && event.hasItem()) {
             if (event.action == Action.RIGHT_CLICK_AIR || event.action == Action.RIGHT_CLICK_BLOCK) {
-                val e = Event(UseEventAttribute(), ItemSourceEventAttribute(event.item!!),
+                val gearyEvent = Event(UseEventAttribute(), ItemSourceEventAttribute(event.item!!),
                         EntitySourceEventAttribute(event.player), LocationSourceEventAttribute(event.player.eyeLocation))
-                e.call()
-                if (!e.has<UseEventAttribute>()) {
+                event.clickedBlock?.let {
+                    gearyEvent += LocationTargetEventAttribute(it.location)
+                    gearyEvent += FaceTargetEventAttribute(event.blockFace)
+                }
+                gearyEvent.call()
+                if (!gearyEvent.has<UseEventAttribute>()) {
                     event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY)
                     event.setUseItemInHand(org.bukkit.event.Event.Result.DENY)
                 }
@@ -36,6 +38,9 @@ class ActionListener : Listener {
     fun test(event: PlayerInteractEvent) {
         if (event.clickedBlock?.type == Material.DIAMOND_BLOCK) {
             event.player.inventory.addItem(BlazeReapItem.create())
+        }
+        if (event.clickedBlock?.type == Material.IRON_BLOCK) {
+            event.player.inventory.addItem(RopeItem.create())
         }
     }
 }

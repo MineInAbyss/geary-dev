@@ -2,6 +2,7 @@ package io.github.paul1365972.gearycore.events
 
 import io.github.paul1365972.geary.event.attributes.EventAttribute
 import org.bukkit.Location
+import org.bukkit.block.BlockFace
 import org.bukkit.entity.Entity
 import org.bukkit.inventory.ItemStack
 
@@ -21,4 +22,12 @@ data class EntityTargetEventAttribute(
 
 data class LocationSourceEventAttribute(
         var location: Location
+) : EventAttribute
+
+data class LocationTargetEventAttribute(
+        var location: Location
+) : EventAttribute
+
+data class FaceTargetEventAttribute(
+        var blockFace: BlockFace
 ) : EventAttribute

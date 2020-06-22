@@ -10,6 +10,9 @@ import io.github.paul1365972.gearycore.systems.blazereap.BlazingExploderFireList
 import io.github.paul1365972.gearycore.systems.blazereap.BlazingExploderUseListener
 import io.github.paul1365972.gearycore.systems.cooldown.CooldownCanceller
 import io.github.paul1365972.gearycore.systems.durability.DurabilityItemDegrader
+import io.github.paul1365972.gearycore.systems.rope.RopeClimbListener
+import io.github.paul1365972.gearycore.systems.rope.RopeCreateListener
+import io.github.paul1365972.gearycore.systems.rope.RopeUseListener
 import org.bukkit.plugin.java.JavaPlugin
 
 class GearyCore : JavaPlugin() {
@@ -20,6 +23,9 @@ class GearyCore : JavaPlugin() {
         GearyEventManager.register(BlazingExploderUseListener())
         GearyEventManager.register(BlazingExploderFireListener())
         GearyEventManager.register(CooldownCanceller())
+        GearyEventManager.register(RopeUseListener())
+        GearyEventManager.register(RopeCreateListener())
+        GearyEventManager.register(RopeClimbListener())
 
         server.pluginManager.registerEvents(ActionListener(), this)
         server.scheduler.scheduleSyncRepeatingTask(this, {

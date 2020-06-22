@@ -32,7 +32,7 @@ class Geary : JavaPlugin(), GearyService {
     override fun forPotentiallyActiveEntities(consumer: (Entity) -> Unit) {
         server.worlds.forEach { world ->
             world.entities.forEach { entity ->
-                if (entity?.persistentDataContainer?.isEmpty == false)
+                //if (entity?.persistentDataContainer?.isEmpty == false)
                     consumer(entity)
             }
         }

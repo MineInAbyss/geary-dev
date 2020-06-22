@@ -8,16 +8,15 @@ import io.github.paul1365972.geary.event.listener.EventPriority
 import io.github.paul1365972.gearycore.GearyCorePlugin
 import io.github.paul1365972.gearycore.events.EntitySourceEventAttribute
 import io.github.paul1365972.gearycore.events.ItemSourceEventAttribute
+import io.github.paul1365972.gearycore.events.LocationTargetEventAttribute
 import io.github.paul1365972.gearycore.events.UseEventAttribute
 import io.github.paul1365972.gearycore.systems.cooldown.UseCooldownEventAttribute
 import io.github.paul1365972.gearycore.systems.cooldown.cooldownComponent
 import io.github.paul1365972.gearycore.systems.durability.DurabilityUseEventAttribute
 import io.github.paul1365972.gearycore.util.move
-import org.bukkit.Location
 import org.bukkit.entity.LivingEntity
 
 data class BlazingExploderFireEventAttribute(
-        var location: Location,
         var strength: Float,
         var destroyBlocks: Boolean
 ) : EventAttribute
@@ -26,13 +25,13 @@ data class BlazingExploderFireEventAttribute(
 class BlazingExploderUseListener : EventListener(
         GearyCorePlugin,
         EventPhase.INCUBATION,
-        EventPriority.EARLIER
+        EventPriority.EARLY
 ) {
     override fun handle(event: Event) = event.where<UseEventAttribute, ItemSourceEventAttribute, EntitySourceEventAttribute> { _, (item), (entity) ->
         item.blazingExploderComponent.ifPresent { blazingExploder ->
             event.remove<UseEventAttribute>()
-            val location = if (entity is LivingEntity) entity.eyeLocation else entity.location
-            event.add(BlazingExploderFireEventAttribute(location, blazingExploder.strength, blazingExploder.destroyBlocks))
+            event.add(BlazingExploderFireEventAttribute(blazingExploder.strength, blazingExploder.destroyBlocks))
+            event.add(LocationTargetEventAttribute(if (entity is LivingEntity) entity.eyeLocation else entity.location))
             event.add(DurabilityUseEventAttribute())
             item.cooldownComponent.ifPresent {
                 event.add(UseCooldownEventAttribute(it.cooldown))
@@ -46,7 +45,7 @@ class BlazingExploderFireListener : EventListener(
         GearyCorePlugin,
         EventPhase.EXECUTION
 ) {
-    override fun handle(event: Event) = event.where<BlazingExploderFireEventAttribute> { (realLoc, strength, destroyBlocks) ->
+    override fun handle(event: Event) = event.where<BlazingExploderFireEventAttribute, LocationTargetEventAttribute> { (strength, destroyBlocks), (realLoc) ->
         val entity = event.get<EntitySourceEventAttribute>()?.entity
         val loc = realLoc.clone()
         loc.add(loc.direction.multiply(2.0))
