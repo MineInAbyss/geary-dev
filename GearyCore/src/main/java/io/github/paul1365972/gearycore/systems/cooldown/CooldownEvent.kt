@@ -21,7 +21,7 @@ class CooldownCanceller : EventListener(
         item.cooldownComponent.modify {
             val now = currentTicks()
             if (now > nextUse)
-                nextUse = currentTicks() + cooldown
+                nextUse = now + cooldown
             else
                 event.cancelled = true
         }
