@@ -6,7 +6,9 @@ import org.bukkit.block.BlockFace
 import org.bukkit.entity.Entity
 import org.bukkit.inventory.ItemStack
 
-class TickEventAttribute : EventAttribute
+class TickItemEventAttribute : EventAttribute
+
+class TickEntityEventAttribute : EventAttribute
 
 data class ItemSourceEventAttribute(
         var itemStack: ItemStack

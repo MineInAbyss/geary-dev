@@ -21,8 +21,8 @@ object GearyEventManager {
                 left.removeAt(index)
             }
         }
-        (EventPhase.values().toMutableList() - EventPhase.INCUBATION).forEach { priority ->
-            listenerMap[priority]?.forEach { listener ->
+        (EventPhase.values().toMutableList() - EventPhase.INCUBATION).forEach { phase ->
+            listenerMap[phase]?.forEach { listener ->
                 if (!(listener.ignoreCancelled && event.cancelled))
                     listener.handle(event)
             }

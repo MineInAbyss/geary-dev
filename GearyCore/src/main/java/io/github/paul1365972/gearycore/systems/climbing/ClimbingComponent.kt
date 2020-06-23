@@ -18,10 +18,10 @@ object ClimbingKey : CborDataKey<ClimbingComponent>(
 
 @Serializable
 data class ClimbingComponent(
-        var oldFlySpeed: Float = 1f,
+        var oldFlySpeed: Float? = null,
         @Transient
-        val backingOriginSpeedMap: MutableMap<String, Float> = mutableMapOf()
-) : Component<ClimbingComponent>, MutableMap<String, Float> by backingOriginSpeedMap {
+        var sources: MutableMap<String, Float> = mutableMapOf()
+) : Component<ClimbingComponent> {
     override fun key() = ClimbingKey
 }
 

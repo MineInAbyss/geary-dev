@@ -5,7 +5,7 @@ import io.github.paul1365972.geary.event.listener.EventListener
 import io.github.paul1365972.geary.event.listener.EventPhase
 import io.github.paul1365972.gearycore.GearyCorePlugin
 import io.github.paul1365972.gearycore.events.EntitySourceEventAttribute
-import io.github.paul1365972.gearycore.events.TickEventAttribute
+import io.github.paul1365972.gearycore.events.TickEntityEventAttribute
 import org.bukkit.entity.Player
 
 
@@ -13,23 +13,26 @@ class ClimbingListener : EventListener(
         GearyCorePlugin,
         EventPhase.EXECUTION
 ) {
-    override fun handle(event: Event) = event.where<TickEventAttribute, EntitySourceEventAttribute> { _, (entity) ->
+    override fun handle(event: Event) = event.where<TickEntityEventAttribute, EntitySourceEventAttribute> { _, (entity) ->
         if (entity is Player) {
-            entity.climbingComponent.ifPresent { climb ->
-                val speed = climb.values.max()
+            entity.climbingComponent.modify {
+                val speed = sources.values.max()
                 if (speed != null) {
                     if (!entity.isFlying || entity.flySpeed < speed) {
-                        climb.oldFlySpeed = entity.flySpeed
+                        oldFlySpeed = entity.flySpeed
                         entity.isFlying = true
                         entity.flySpeed = speed
                     }
                 } else {
                     if (entity.isFlying) {
-                        entity.isFlying = false
-                        entity.flySpeed = climb.oldFlySpeed
+                        oldFlySpeed?.let {
+                            entity.isFlying = false
+                            entity.flySpeed = it
+                            oldFlySpeed = null
+                        }
                     }
                 }
-                climb.clear()
+                sources.clear()
             }
         }
     }

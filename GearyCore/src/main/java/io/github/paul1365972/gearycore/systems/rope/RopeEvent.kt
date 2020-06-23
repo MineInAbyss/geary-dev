@@ -73,7 +73,7 @@ class RopeClimbListener : EventListener(
         EventPhase.EXECUTION,
         EventPriority.EARLIER
 ) {
-    override fun handle(event: Event) = event.where<TickEventAttribute, EntitySourceEventAttribute> { _, (entity) ->
+    override fun handle(event: Event) = event.where<TickEntityEventAttribute, EntitySourceEventAttribute> { _, (entity) ->
         entity.ropeComponent.ifPresent { (length) ->
             val loc = entity.location.clone()
             val particlesPerBlock = 10
@@ -83,11 +83,12 @@ class RopeClimbListener : EventListener(
                 entity.world.spawnParticle(REDSTONE, loc, 1, DustOptions(Color.fromRGB(178, 78, 16), 0.5f))
                 loc.add(delta)
             }
-            val hitbox = BoundingBox.of(loc.toVector().add(Vector(0f, -length, 0f)), 0.75, length.toDouble(), 0.75)
+            val hitbox = BoundingBox.of(loc.toVector().add(Vector(0f, -length / 2 + 2, 0f)), 0.75, length.toDouble() + 2, 0.75)
+            println(hitbox)
             entity.world.getNearbyEntities(hitbox).forEach {
                 if (it is Player) {
                     it.climbingComponent.modify({ ClimbingComponent() }) {
-                        put("rope", 0.1f)
+                        sources["rope"] = 0.05f
                     }
                 }
             }
