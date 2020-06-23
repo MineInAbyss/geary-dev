@@ -33,7 +33,7 @@ class Geary : JavaPlugin(), GearyService {
         server.worlds.forEach { world ->
             world.entities.forEach { entity ->
                 //if (entity?.persistentDataContainer?.isEmpty == false)
-                    consumer(entity)
+                consumer(entity)
             }
         }
     }
