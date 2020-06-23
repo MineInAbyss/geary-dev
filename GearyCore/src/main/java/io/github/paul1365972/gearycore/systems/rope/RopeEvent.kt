@@ -7,6 +7,8 @@ import io.github.paul1365972.geary.event.listener.EventPhase
 import io.github.paul1365972.geary.event.listener.EventPriority
 import io.github.paul1365972.gearycore.GearyCorePlugin
 import io.github.paul1365972.gearycore.events.*
+import io.github.paul1365972.gearycore.systems.climbing.ClimbingComponent
+import io.github.paul1365972.gearycore.systems.climbing.climbingComponent
 import io.github.paul1365972.gearycore.systems.cooldown.UseCooldownEventAttribute
 import io.github.paul1365972.gearycore.systems.cooldown.cooldownComponent
 import io.github.paul1365972.gearycore.systems.durability.DurabilityUseEventAttribute
@@ -15,6 +17,8 @@ import org.bukkit.Material
 import org.bukkit.Particle.*
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.AreaEffectCloud
+import org.bukkit.entity.Player
+import org.bukkit.util.BoundingBox
 import org.bukkit.util.Vector
 import kotlin.math.ceil
 import kotlin.math.roundToInt
@@ -66,17 +70,26 @@ class RopeCreateListener : EventListener(
 
 class RopeClimbListener : EventListener(
         GearyCorePlugin,
-        EventPhase.EXECUTION
+        EventPhase.EXECUTION,
+        EventPriority.EARLIER
 ) {
     override fun handle(event: Event) = event.where<TickEventAttribute, EntitySourceEventAttribute> { _, (entity) ->
         entity.ropeComponent.ifPresent { (length) ->
-            val loc = entity.location
+            val loc = entity.location.clone()
             val particlesPerBlock = 10
             val particles = ceil(particlesPerBlock * length).roundToInt()
             val delta = Vector(0f, -length / particles, 0f)
             repeat(particles + 1) {
                 entity.world.spawnParticle(REDSTONE, loc, 1, DustOptions(Color.fromRGB(178, 78, 16), 0.5f))
                 loc.add(delta)
+            }
+            val hitbox = BoundingBox.of(loc.toVector().add(Vector(0f, -length, 0f)), 0.75, length.toDouble(), 0.75)
+            entity.world.getNearbyEntities(hitbox).forEach {
+                if (it is Player) {
+                    it.climbingComponent.modify({ ClimbingComponent() }) {
+                        put("rope", 0.1f)
+                    }
+                }
             }
         }
     }
