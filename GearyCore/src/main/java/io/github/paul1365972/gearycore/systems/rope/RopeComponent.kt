@@ -3,18 +3,17 @@ package io.github.paul1365972.gearycore.systems.rope
 import io.github.paul1365972.geary.ecs.Component
 import io.github.paul1365972.gearycore.GearyCorePlugin
 import io.github.paul1365972.story.access.access
-import io.github.paul1365972.story.key.CborDataKey
+import io.github.paul1365972.story.key.KsxDataKey
 import kotlinx.serialization.Serializable
 import org.bukkit.entity.Entity
 import org.bukkit.inventory.ItemStack
 
-object RopeKey : CborDataKey<RopeComponent>(
+object RopeKey : KsxDataKey<RopeComponent>(
         GearyCorePlugin,
         "rope",
+        { it.copy() },
         RopeComponent.serializer()
-) {
-    override fun copy(value: RopeComponent) = value.copy()
-}
+)
 
 @Serializable
 data class RopeComponent(

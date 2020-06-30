@@ -3,18 +3,17 @@ package io.github.paul1365972.gearycore.systems.climbing
 import io.github.paul1365972.geary.ecs.Component
 import io.github.paul1365972.gearycore.GearyCorePlugin
 import io.github.paul1365972.story.access.access
-import io.github.paul1365972.story.key.CborDataKey
+import io.github.paul1365972.story.key.KsxDataKey
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.bukkit.entity.Entity
 
-object ClimbingKey : CborDataKey<ClimbingComponent>(
+object ClimbingKey : KsxDataKey<ClimbingComponent>(
         GearyCorePlugin,
         "climbing",
+        { it.copy() },
         ClimbingComponent.serializer()
-) {
-    override fun copy(value: ClimbingComponent) = value.copy()
-}
+)
 
 @Serializable
 data class ClimbingComponent(

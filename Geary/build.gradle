@@ -1,9 +1,9 @@
 plugins {
     id 'java'
     id 'maven-publish'
-    id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
-    id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlinVersion"
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'com.github.johnrengelman.shadow'
 }
 
 group pluginGroup
@@ -28,9 +28,8 @@ compileTestKotlin {
 
 publishing {
     publications {
-        mavenGeary(MavenPublication) {
+        mvnGeary(MavenPublication) {
             from components.java
-            artifact shadowJar
 
             afterEvaluate {
                 artifactId project.name.toLowerCase()
@@ -61,8 +60,8 @@ repositories {
 dependencies {
     compileOnly "org.spigotmc:spigot-api:$serverVersion"
 
-    // TODO implementation 'io.github.paul1365972:story:1.0-SNAPSHOT'
-    implementation 'com.github.paul1365972:story:master-SNAPSHOT'
+    // TODO implementation 'io.github.paul1365972:story:2.0-SNAPSHOT'
+    implementation 'com.github.paul1365972:story:d7c399fc3d'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxserializationVersion"
