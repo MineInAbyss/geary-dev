@@ -6,6 +6,7 @@ import io.github.paul1365972.geary.event.listener.EventListener
 import io.github.paul1365972.geary.event.listener.EventPhase
 import io.github.paul1365972.gearycore.GearyCorePlugin
 import io.github.paul1365972.gearycore.events.ItemSourceEventAttribute
+import io.github.paul1365972.story.access.get
 import kotlin.math.roundToLong
 
 data class UseCooldownEventAttribute(
@@ -18,7 +19,7 @@ class CooldownCanceller : EventListener(
         EventPhase.INCUBATION
 ) {
     override fun handle(event: Event) = event.where<UseCooldownEventAttribute, ItemSourceEventAttribute> { _, (item) ->
-        item.cooldownComponent.modify {
+        item[CooldownKey].modify {
             val now = currentTicks()
             if (now > nextUse)
                 nextUse = now + cooldown

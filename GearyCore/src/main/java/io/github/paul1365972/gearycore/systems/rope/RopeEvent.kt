@@ -8,10 +8,11 @@ import io.github.paul1365972.geary.event.listener.EventPriority
 import io.github.paul1365972.gearycore.GearyCorePlugin
 import io.github.paul1365972.gearycore.events.*
 import io.github.paul1365972.gearycore.systems.climbing.ClimbingComponent
-import io.github.paul1365972.gearycore.systems.climbing.climbingComponent
+import io.github.paul1365972.gearycore.systems.climbing.ClimbingKey
+import io.github.paul1365972.gearycore.systems.cooldown.CooldownKey
 import io.github.paul1365972.gearycore.systems.cooldown.UseCooldownEventAttribute
-import io.github.paul1365972.gearycore.systems.cooldown.cooldownComponent
 import io.github.paul1365972.gearycore.systems.durability.DurabilityUseEventAttribute
+import io.github.paul1365972.story.access.get
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.Particle.*
@@ -35,12 +36,12 @@ class RopeUseListener : EventListener(
         EventPriority.EARLIER
 ) {
     override fun handle(event: Event) = event.where<UseEventAttribute, ItemSourceEventAttribute, LocationTargetEventAttribute, FaceTargetEventAttribute> { _, (item), _, (face) ->
-        item.ropeComponent.ifPresent { rope ->
+        item[RopeItemKey].ifPresent { rope ->
             if (face in setOf(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST)) {
                 event.remove<UseEventAttribute>()
                 event.add(RopeCreateEventAttribute(rope.length))
                 event.add(DurabilityUseEventAttribute())
-                item.cooldownComponent.ifPresent {
+                item[CooldownKey].ifPresent {
                     event.add(UseCooldownEventAttribute(it.cooldown))
                 }
             }
@@ -62,7 +63,7 @@ class RopeCreateListener : EventListener(
             it.setParticle(BLOCK_DUST, Material.AIR.createBlockData())
             //it.clearCustomEffects()
         }.apply {
-            ropeComponent.set(RopeComponent(length))
+            this[RopeEntityKey].set(RopeComponent(length))
         }
     }
 }
@@ -74,7 +75,7 @@ class RopeClimbListener : EventListener(
         EventPriority.EARLIER
 ) {
     override fun handle(event: Event) = event.where<TickEntityEventAttribute, EntitySourceEventAttribute> { _, (entity) ->
-        entity.ropeComponent.ifPresent { (length) ->
+        entity[RopeEntityKey].ifPresent { (length) ->
             val loc = entity.location.clone()
             val particlesPerBlock = 10
             val particles = ceil(particlesPerBlock * length).roundToInt()
@@ -87,7 +88,7 @@ class RopeClimbListener : EventListener(
             println(hitbox)
             entity.world.getNearbyEntities(hitbox).forEach {
                 if (it is Player) {
-                    it.climbingComponent.modify({ ClimbingComponent() }) {
+                    it[ClimbingKey].modify({ ClimbingComponent() }) {
                         sources["rope"] = 0.05f
                     }
                 }

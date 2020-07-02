@@ -6,6 +6,7 @@ import io.github.paul1365972.geary.event.listener.EventPhase
 import io.github.paul1365972.gearycore.GearyCorePlugin
 import io.github.paul1365972.gearycore.events.EntitySourceEventAttribute
 import io.github.paul1365972.gearycore.events.TickEntityEventAttribute
+import io.github.paul1365972.story.access.get
 import org.bukkit.entity.Player
 
 
@@ -15,7 +16,7 @@ class ClimbingListener : EventListener(
 ) {
     override fun handle(event: Event) = event.where<TickEntityEventAttribute, EntitySourceEventAttribute> { _, (entity) ->
         if (entity is Player) {
-            entity.climbingComponent.modify {
+            entity[ClimbingKey].modify {
                 val speed = sources.values.max()
                 if (speed != null) {
                     if (!entity.isFlying || entity.flySpeed < speed) {

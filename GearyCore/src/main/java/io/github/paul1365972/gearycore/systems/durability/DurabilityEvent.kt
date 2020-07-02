@@ -6,6 +6,7 @@ import io.github.paul1365972.geary.event.listener.EventListener
 import io.github.paul1365972.geary.event.listener.EventPhase
 import io.github.paul1365972.gearycore.GearyCorePlugin
 import io.github.paul1365972.gearycore.events.ItemSourceEventAttribute
+import io.github.paul1365972.story.access.get
 import org.bukkit.inventory.meta.Damageable
 import java.lang.Integer.max
 import kotlin.math.roundToInt
@@ -20,7 +21,7 @@ class DurabilityItemDegrader : EventListener(
         EventPhase.EXECUTION
 ) {
     override fun handle(event: Event) = event.where<DurabilityUseEventAttribute, ItemSourceEventAttribute> { (durabilityUsage), (item) ->
-        item.durabilityComponent.modify {
+        item[DurabilityKey].modify {
             val meta = item.itemMeta
             if (meta is Damageable) {
                 //val remaining = 1.0 * durability / maxDurability

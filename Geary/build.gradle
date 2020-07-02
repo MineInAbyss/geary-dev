@@ -39,7 +39,6 @@ publishing {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     jcenter()
     maven {
@@ -50,18 +49,16 @@ repositories {
         name 'sonatype'
         url 'https://oss.sonatype.org/content/groups/public/'
     }
-    // TODO use real repo later
     maven {
-        name 'jitpack'
-        url 'https://jitpack.io/'
+        name 'codemc-repo'
+        url 'https://repo.codemc.io/repository/maven-public/'
     }
 }
 
 dependencies {
     compileOnly "org.spigotmc:spigot-api:$serverVersion"
 
-    // TODO implementation 'io.github.paul1365972:story:2.0-SNAPSHOT'
-    implementation 'com.github.paul1365972:story:d7c399fc3d'
+    implementation 'io.github.paul1365972:story:0.3.2'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$kotlinxserializationVersion"

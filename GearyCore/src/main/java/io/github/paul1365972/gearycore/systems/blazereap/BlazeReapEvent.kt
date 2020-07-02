@@ -10,10 +10,11 @@ import io.github.paul1365972.gearycore.events.EntitySourceEventAttribute
 import io.github.paul1365972.gearycore.events.ItemSourceEventAttribute
 import io.github.paul1365972.gearycore.events.LocationTargetEventAttribute
 import io.github.paul1365972.gearycore.events.UseEventAttribute
+import io.github.paul1365972.gearycore.systems.cooldown.CooldownKey
 import io.github.paul1365972.gearycore.systems.cooldown.UseCooldownEventAttribute
-import io.github.paul1365972.gearycore.systems.cooldown.cooldownComponent
 import io.github.paul1365972.gearycore.systems.durability.DurabilityUseEventAttribute
 import io.github.paul1365972.gearycore.util.move
+import io.github.paul1365972.story.access.get
 import org.bukkit.entity.LivingEntity
 
 data class BlazingExploderFireEventAttribute(
@@ -28,12 +29,12 @@ class BlazingExploderUseListener : EventListener(
         EventPriority.EARLY
 ) {
     override fun handle(event: Event) = event.where<UseEventAttribute, ItemSourceEventAttribute, EntitySourceEventAttribute> { _, (item), (entity) ->
-        item.blazingExploderComponent.ifPresent { blazingExploder ->
+        item[BlazingExploderKey].ifPresent { blazingExploder ->
             event.remove<UseEventAttribute>()
             event.add(BlazingExploderFireEventAttribute(blazingExploder.strength, blazingExploder.destroyBlocks))
             event.add(LocationTargetEventAttribute(if (entity is LivingEntity) entity.eyeLocation else entity.location))
             event.add(DurabilityUseEventAttribute())
-            item.cooldownComponent.ifPresent {
+            item[CooldownKey].ifPresent {
                 event.add(UseCooldownEventAttribute(it.cooldown))
             }
         }

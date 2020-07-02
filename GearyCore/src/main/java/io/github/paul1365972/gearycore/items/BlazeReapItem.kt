@@ -1,11 +1,12 @@
 package io.github.paul1365972.gearycore.items
 
 import io.github.paul1365972.gearycore.systems.blazereap.BlazingExploderComponent
-import io.github.paul1365972.gearycore.systems.blazereap.blazingExploderComponent
+import io.github.paul1365972.gearycore.systems.blazereap.BlazingExploderKey
 import io.github.paul1365972.gearycore.systems.cooldown.CooldownComponent
-import io.github.paul1365972.gearycore.systems.cooldown.cooldownComponent
+import io.github.paul1365972.gearycore.systems.cooldown.CooldownKey
 import io.github.paul1365972.gearycore.systems.durability.DurabilityComponent
-import io.github.paul1365972.gearycore.systems.durability.durabilityComponent
+import io.github.paul1365972.gearycore.systems.durability.DurabilityKey
+import io.github.paul1365972.story.access.get
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
@@ -29,9 +30,9 @@ object BlazeReapItem {
                 if (this is Repairable)
                     this.repairCost = 1_000_000
             }
-            blazingExploderComponent.set(BlazingExploderComponent(explosionStrength))
-            durabilityComponent.set(DurabilityComponent(durability))
-            cooldownComponent.set(CooldownComponent(cooldown))
+            this[BlazingExploderKey].set(BlazingExploderComponent(explosionStrength))
+            this[DurabilityKey].set(DurabilityComponent(durability))
+            this[CooldownKey].set(CooldownComponent(cooldown))
         }
     }
 }
